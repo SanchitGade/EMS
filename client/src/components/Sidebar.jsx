@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { href, Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { dummyProfileData } from "../assets/assets";
 import {
   CalendarIcon,
@@ -82,7 +82,7 @@ const SideBar = () => {
             </span>
           </div>
           <div className="min-w-0">
-            <p className="text-[13px] font=medium text-slate-200 truncate">
+            <p className="text-[13px] font-medium text-slate-200 truncate">
               {userName}
             </p>
             <p className="text-[11px] text-slate-500 truncate">
