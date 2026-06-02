@@ -6,12 +6,10 @@ const AttendanceStats = ({history}) => {
     const totalLate = history.filter((h) => h.status === "LATE").length;
 
     const stats = [
-        {label: "Days Present", value: totalPresent, icon: Calendar1Icon},
+        {label: "Days Present", value: totalPesent, icon: Calendar1Icon},
         {label: "Late Arrivals", value: totalLate, icon: AlertCircleIcon},
         {label: "Avg. Work Hrs", value: "8.5Hrs", icon: ClockIcon}
     ]
-
-
 
 
   return (
