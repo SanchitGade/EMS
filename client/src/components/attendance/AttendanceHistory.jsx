@@ -10,7 +10,7 @@ const AttendanceHistory = ({history}) => {
             <h3 className='font-semibold text-slate-900'> Recent Activity </h3>
         </div>
 
-        <div className='overflow-auto'>
+        <div className='overflow-x-auto'>
             <table className='table-modern'>
                 <thead>
                     <tr>
