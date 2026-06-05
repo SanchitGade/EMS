@@ -1,0 +1,22 @@
+import mongoose from "mongoose";
+const payslipSchema = new mongoose.Schema(
+  {
+    employeeId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Employee",
+      required: true,
+    },
+    month: { type: Number, required: true, min: 1, max: 12 },
+    year: { type: Number, required: true, min: 2020, max: 2100 },
+    basicSalary: { type: Number, required: true },
+    allowances: { type: Number, default: 0 },
+    deductions: { type: Number, default: 0 },
+    netSalary: { type: Number, required: true },
+  },
+  { timestamps: true },
+);
+
+const Payslip =
+  mongoose.models.Payslip || mongoose.model("Payslip", payslipSchema);
+
+export default Payslip;
