@@ -1,5 +1,5 @@
 import Employee from "../models/Employee.js";
-import Payslip from "../models/payslip.js";
+import Payslip from "../models/Payslip.js";
 
 // Create Payslip
 // POST /api/payslips
