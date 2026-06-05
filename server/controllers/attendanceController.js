@@ -1,5 +1,6 @@
 import Employee from "../models/Employee.js";
 import Attendance from "../models/Attendance.js";
+import { inngest } from "../inngest/index.js";
 
 //Clock In & Out for Employees
 //POST /api/attendance
@@ -28,7 +29,8 @@ export const clockInOut = async (req, res) => {
     const now = new Date();
 
     if (!existing) {
-      const isLate = now.getHours() > 9 || (now.getHours() === 9 && now.getMinutes() > 0);
+      const isLate =
+        now.getHours() > 9 || (now.getHours() === 9 && now.getMinutes() > 0);
 
       const attendance = await Attendance.create({
         employeeId: employee._id,
@@ -37,10 +39,17 @@ export const clockInOut = async (req, res) => {
         status: isLate ? "LATE" : "PRESENT",
       });
 
+      await inngest.send({
+        name: "employee/check-out",
+        data: {
+          employeeId: employee._id,
+          attendanceId: attendance._id,
+        },
+      });
+
       return res
         .status(201)
         .json({ success: true, type: "CHECK_IN", data: attendance });
-
     } else if (!existing.checkOut) {
       const checkInTime = new Date(existing.checkIn).getTime();
       const diffMs = now.getTime() - checkInTime;
@@ -55,7 +64,7 @@ export const clockInOut = async (req, res) => {
       if (workingHours >= 8) dayType = "Full Day";
       else if (workingHours >= 6) dayType = "Three Quarter Day";
       else if (workingHours >= 4) dayType = "Half Day";
-      else (dayType = "Short Day") 
+      else dayType = "Short Day";
       existing.workingHours = workingHours;
       existing.dayType = dayType;
 
@@ -91,7 +100,6 @@ export const getAttendance = async (req, res) => {
       data: history,
       employee: { isDeleted: employee.isDeleted },
     });
-
   } catch (error) {
     return res
       .status(500)
