@@ -24,7 +24,7 @@ const GeneratePayslipForm = ({employee, onSucess}) => {
         try{
             await api.post("/payslips", data)
             setIsOpen(false)
-            onSucess()
+            onSuccess()
         }catch(error)
         {
             toast.error(error?.response?.data?.error || error?.message)
