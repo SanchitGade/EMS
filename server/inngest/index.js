@@ -97,13 +97,20 @@ const attendanceReminderCrons = inngest.createFunction(
   async ({ step }) => {
     // 1. Today's date range
     const today = await step.run("get-today-date", () => {
-      const startUTC = new Date(
-        new Date().toLocaleString("en-CA", {
+      const now = new Date();
+
+      const istDate = new Date(
+        now.toLocaleString("en-US", {
           timeZone: "Asia/Kolkata",
-        }) + "T00:00:00+05:30",
+        }),
       );
 
-      const endUTC = new Date(startUTC.getTime() + 24 * 60 * 60 * 1000);
+      const year = istDate.getFullYear();
+      const month = istDate.getMonth();
+      const day = istDate.getDate();
+
+      const startUTC = new Date(Date.UTC(year, month, day, 0, 0, 0));
+      const endUTC = new Date(Date.UTC(year, month, day + 1, 0, 0, 0));
 
       return {
         startUTC: startUTC.toISOString(),
@@ -140,12 +147,15 @@ const attendanceReminderCrons = inngest.createFunction(
 
     // 4. Employees who checked in today
     const checkedInIds = await step.run("get-checked-in-ids", async () => {
-      const attendances = await Attendance.find({
-        date: {
-          $gte: new Date(today.startUTC),
-          $lt: new Date(today.endUTC),
+      const attendances = await Attendance.find(
+        {
+          date: {
+            $gte: new Date(today.startUTC),
+            $lt: new Date(today.endUTC),
+          },
         },
-      }).lean();
+        "employeeId",
+      ).lean();
 
       return attendances.map((a) => a.employeeId.toString());
     });
@@ -165,6 +175,10 @@ const attendanceReminderCrons = inngest.createFunction(
         }),
       ),
     );
+
+    console.log("NOW:", now);
+    console.log("START:", startUTC);
+    console.log("END:", endUTC);
 
     return {
       totalActive: activeEmployees.length,
