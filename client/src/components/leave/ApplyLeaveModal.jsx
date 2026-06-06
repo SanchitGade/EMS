@@ -24,6 +24,8 @@ const ApplyLeaveModal = ({open, onClose, onSuccess}) => {
             onClose()
         } catch (error) {
             toast.error(error.response?.data?.error || error.message)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -87,8 +89,8 @@ const ApplyLeaveModal = ({open, onClose, onSuccess}) => {
                  </div>
 
                  {/* ---Buttons--- */}
-                 <div onClick={() => onClose()} className='flex gap-3 pt-2'>
-                    <button className='btn-secondary flex-1' type='button'>
+                 <div className='flex gap-3 pt-2'>
+                    <button className='btn-secondary flex-1' type='button' onClick={onClose} >
                             Cancel
                     </button>
 

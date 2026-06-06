@@ -15,11 +15,6 @@ const ChangePasswordModal = ({ open, onClose }) => {
     const currentPassword = formData.get("currentPassword");
     const newPassword = formData.get("newPassword");
 
-    console.log({
-      currentPassword,
-      newPassword,
-    });
-
     try {
       const { data } = await api.post("/auth/change-password", {
         currentPassword,

@@ -1,6 +1,7 @@
 import { Loader2, Plus, X } from 'lucide-react'
 import React, { useState } from 'react'
 import api from '../../api/axios'
+import toast from "react-hot-toast";
 
 const GeneratePayslipForm = ({employee, onSucess}) => {
 
@@ -52,7 +53,7 @@ const GeneratePayslipForm = ({employee, onSucess}) => {
                     <select name='employeeId' required> 
                         {
                             employee.map( (e) => (
-                            <option key={e.id} value={e.id}>
+                            <option key={e.id || e._id} value={e.id || e._id}>
                                 {e.firstName} {e.lastName} ({e.position})
                             </option>
                             ) )

@@ -28,7 +28,7 @@ const EmployeeForm = ({ initialData, onSuccess, onCancel, color }) => {
       const url = isEditMode ? `/employees/${initialData.id}` : `/employees`;
 
       const method = isEditMode ? "put" : "post";
-      const res = await api[method](url, formData);
+      const res = await api[method](url, payload);
       //   console.log("Success:", res.data);
 
       onSuccess

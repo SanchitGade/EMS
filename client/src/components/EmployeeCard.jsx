@@ -1,6 +1,6 @@
 import { PencilIcon, Trash2Icon } from 'lucide-react';
 import toast from 'react-hot-toast';
-import moduleName from '../api/axios'
+import api from '../api/axios'
 
 const EmployeeCard = ({employee, 
   onDelete, onEdit}) => {
