@@ -2,10 +2,10 @@ import jwt from 'jsonwebtoken';
 
 export const protect = (req, res, next) => {
     try {
-        const authHeader = req.header.authorization;
+        const authHeader = req.headers.authorization;
 
         if(!authHeader || !authHeader.startsWith("Bearer ")){
-            return res.status(401).json({error: "Unauthorized"});
+            return res.status(401).json({error: "Authorization token missing"});
         }
 
         const token = authHeader.split(" ")[1];
@@ -19,6 +19,7 @@ export const protect = (req, res, next) => {
         next();
 
     } catch (error) {
+        console.error("JWT Error:", error.message);
         return res.status(401).json({error: "Unauthorized"});
     }
 }

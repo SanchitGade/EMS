@@ -21,13 +21,13 @@ const AdminDashboard = ({ data }) => {
     },
     {
       icon: Calendar1Icon,
-      value: data.totalAttendance,
+      value: data.todayAttendance,
       label: "Today's Attendance",
       description: "Check in today ",
     },
     {
       icon: FileTextIcon,
-      value: data.totalPendingLeaves,
+      value: data.pendingLeaves,
       label: "Pending Leaves",
       description: "Awaiting approval",
     },

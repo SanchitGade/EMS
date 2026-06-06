@@ -1,5 +1,7 @@
 import { CalendarDays, FileText, Loader2, Loader2Icon, Send, X } from 'lucide-react';
 import { useState } from 'react'
+import {toast} from 'react-hot-toast'
+import api from '../../api/axios'
 
 const ApplyLeaveModal = ({open, onClose, onSuccess}) => {
     const [loading, setLoading] = useState(false)
@@ -11,6 +13,18 @@ const ApplyLeaveModal = ({open, onClose, onSuccess}) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        setLoading(true);
+
+        const formData = new FormData(e.currentTarget);
+        const data = Object.fromEntries(formData.entries())
+
+        try {
+            await api.post('/leave', data)
+            onSuccess()
+            onClose()
+        } catch (error) {
+            toast.error(error.response?.data?.error || error.message)
+        }
     }
 
     if(!open) return null;
@@ -73,12 +87,12 @@ const ApplyLeaveModal = ({open, onClose, onSuccess}) => {
                  </div>
 
                  {/* ---Buttons--- */}
-                 <div className='flex gap-3 pt-2'>
-                    <button className='btn-secondary flex-1' type='button' onClick={onClose}>
+                 <div onClick={() => onClose()} className='flex gap-3 pt-2'>
+                    <button className='btn-secondary flex-1' type='button'>
                             Cancel
                     </button>
 
-                    <button className='btn-primary flex-1 flex items-center justify-center gap-2' type='submit' onClick={onClose} disabled={loading}>
+                    <button className='btn-primary flex-1 flex items-center justify-center gap-2' type='submit' disabled={loading}>
                         {loading ? <Loader2 className='w-4 h-4 animate-spin' /> : <Send className='w-4 h-4'/>}
                         {loading ? "Submitting..." : "Submit"}
                     </button>
