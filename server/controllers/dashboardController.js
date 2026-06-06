@@ -12,7 +12,7 @@ export const getDashboard = async (req, res) => {
 
     //For Admin
     if (session.role === "ADMIN") {
-      const [totalEmployee, todayAttendance, pendingLeaves] = await Promise.all(
+      const [totalEmployees, todayAttendance, pendingLeaves] = await Promise.all(
         [
           Employee.countDocuments({ isDeleted: { $ne: true } }),
           Attendance.countDocuments({
@@ -26,7 +26,7 @@ export const getDashboard = async (req, res) => {
       );
       return res.json({
         role: "ADMIN",
-        totalEmployee,
+        totalEmployees,
         totalDepartments: DEPARTMENTS.length,
         todayAttendance,
         pendingLeaves,

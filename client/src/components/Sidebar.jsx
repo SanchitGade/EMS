@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { data, Link, useLocation } from "react-router-dom";
 import { dummyProfileData } from "../assets/assets";
+import api from "../api/axios";
+import { useAuth } from "../context/AuthContext";
 import {
   CalendarIcon,
   ChevronRightIcon,
@@ -8,6 +10,7 @@ import {
   FileTextIcon,
   icons,
   LayoutGridIcon,
+  Loader2,
   LogOutIcon,
   MenuIcon,
   SettingsIcon,
@@ -21,6 +24,16 @@ const SideBar = () => {
   const [userName, setUserName] = useState("");
   const [mobileOpen, setMobileOpen] = useState(false);
 
+  const { user, loading, logout } = useAuth();
+
+  useEffect(() => {
+    api.get("/profile").then(({ data }) => {
+      if (data.firstName) {
+        setUserName(`${data.firstName} ${data.lastName || " "}`.trim());
+      }
+    });
+  }, []);
+
   useEffect(() => {
     setUserName(dummyProfileData.firstName + " " + dummyProfileData.lastName);
   }, []);
@@ -31,10 +44,13 @@ const SideBar = () => {
   }, [pathname]);
 
   const handleLogout = () => {
-    window.location.href = "/login";    
-  }
+    logout();
+    window.location.href = "/login";
+  };
 
-  const role = "" || "EMPLOYEE";
+  const role = user?.role;
+
+  const profileColor = role === "ADMIN" ? "bg-yellow-500" : "bg-red-800";
 
   const navItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutGridIcon },
@@ -73,10 +89,12 @@ const SideBar = () => {
       </div>
 
       {/*User Profile Card */}
-      <div className="mx-3 mt-4 mb-5 p-3 rounded-lg bg-white/3 border border-white/4">
+      <div className="mx-3 mt-4 mb-5 p-3 rounded-lg bg-white/3 border border-white/4 animate-fade-in">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-slate-800 flex items-center justify-center ring-1 ring-white/10 shrink-0">
-            <span className="text-slate-400 text-xs font-semibold">
+          <div
+            className={`w-9 h-9 rounded-lg ${profileColor} flex items-center justify-center ring-1 ring-white/10 shrink-0`}
+          >
+            <span className="text-white-400 text-xm font-semibold">
               {userName.charAt(0).toUpperCase()}
             </span>
           </div>
@@ -93,41 +111,51 @@ const SideBar = () => {
 
       {/*Navigation List */}
       <div className="flex-1 px-3 space-y-0.5 overflow-y-auto ">
-        {navItems.map((item) => {
-          const isActive = pathname.startsWith(item.href);
+        {loading ? (
+          <div className="px-3 py-3 flex items-center gap-2 text-slate-500">
+            <Loader2 className="w-4 h-4 animate-spin" /> 
+            <span className="text-sm"> Loading...</span>
+          </div>
+        ) : (
+          navItems.map((item) => {
+            const isActive = pathname.startsWith(item.href);
 
-          return (
-            <Link
-              key={item.href}
-              to={item.href}
-              className={`group relative flex items-center gap-3 px-3 py-2.5 rounded-md text-[13px] font-medium transition-all duration-500 ${
-                isActive
-                  ? "bg-indigo-500/10 text-white"
-                  : "text-slate-300 hover:bg-white/5"
-              }`}
-            >
-              {isActive && (
-                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-indigo-500" />
-              )}
-              <item.icon
-                className={`w-5 h-5 shrink-0 ${
+            return (
+              <Link
+                key={item.href}
+                to={item.href}
+                className={`animate-fade-in group relative flex items-center gap-3 px-3 py-2.5 rounded-md text-[13px] font-medium transition-all duration-500 ${
                   isActive
-                    ? "text-indigo-300"
-                    : "text-slate-400 group-hover:text-slate-200"
+                    ? "bg-indigo-500/10 text-white"
+                    : "text-slate-300 hover:bg-white/5"
                 }`}
-              />
-              <span className="flex-1 text-sm font-light">{item.name}</span>
-              {isActive && (
-                <ChevronRightIcon className="w-4 h-4 text-indigo-300" />
-              )}
-            </Link>
-          );
-        })}
+              >
+                {isActive && (
+                  <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[3px] h-5 rounded-r-full bg-indigo-500" />
+                )}
+                <item.icon
+                  className={`w-5 h-5 shrink-0 ${
+                    isActive
+                      ? "text-indigo-300"
+                      : "text-slate-400 group-hover:text-slate-200"
+                  }`}
+                />
+                <span className="flex-1 text-sm font-light">{item.name}</span>
+                {isActive && (
+                  <ChevronRightIcon className="w-4 h-4 text-indigo-300" />
+                )}
+              </Link>
+            );
+          })
+        )}
       </div>
 
       {/*Logout */}
       <div className="p-3 border-t border-white/6">
-        <button onClick={handleLogout} className="flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-[13px] font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-500/8 transition-all duration-150">
+        <button
+          onClick={handleLogout}
+          className="flex items-center gap-3 w-full px-3 py-2.5 rounded-md text-[13px] font-medium text-slate-400 hover:text-rose-400 hover:bg-rose-500/8 transition-all duration-150"
+        >
           <LogOutIcon className="w-[17px] h-[17px]" />
           <span>Log Out</span>
         </button>

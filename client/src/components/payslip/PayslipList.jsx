@@ -1,8 +1,8 @@
-import { format } from 'date-fns';
-import { Download } from 'lucide-react';
-import React from 'react'
+import { format } from "date-fns";
+import { Download } from "lucide-react";
+import React from "react";
 
-const PayslipList = ({payslips ,isAdmin}) => {
+const PayslipList = ({ payslips, isAdmin }) => {
   return (
     <>
       <div className="card overflow-hidden">
@@ -33,11 +33,15 @@ const PayslipList = ({payslips ,isAdmin}) => {
                     <tr key={payslip._id || payslip.id}>
                       {isAdmin && (
                         <td className=" text-slate-900">
-                          {payslip.employee?.firstName} {payslip.employee?.lastName}
+                          {payslip.employee?.firstName}{" "}
+                          {payslip.employee?.lastName}
                         </td>
                       )}
-                      <td className='text-slate-500'>
-                        {format (new Date(payslip.year, payslip.month - 1), "MMMM yyyy")}
+                      <td className="text-slate-500">
+                        {format(
+                          new Date(payslip.year, payslip.month - 1),
+                          "MMMM yyyy",
+                        )}
                       </td>
 
                       <td className="text-slate-500">
@@ -47,10 +51,16 @@ const PayslipList = ({payslips ,isAdmin}) => {
                         ${payslip.netSalary?.toLocaleString()}
                       </td>
 
-                      <td className='text-center'>
-                        <button onClick={() => window.open(`/print/payslips/${payslip.id || payslip_.id}`)}
-                        className='inline-flex items-center px-3 py-1.5 text-xs font-medium rounded text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors ring-1 ring-blue-600/10'>
-                            <Download className='w-3 h-3 mr-1.5'/> Download
+                      <td className="text-center">
+                        <button
+                          onClick={() =>
+                            window.open(
+                              `/print/payslips/${payslip.id || payslip._id}`,
+                            )
+                          }
+                          className="inline-flex items-center px-3 py-1.5 text-xs font-medium rounded text-blue-600 bg-blue-50 hover:bg-blue-100 transition-colors ring-1 ring-blue-600/10"
+                        >
+                          <Download className="w-3 h-3 mr-1.5" /> Download
                         </button>
                       </td>
                     </tr>
@@ -62,7 +72,7 @@ const PayslipList = ({payslips ,isAdmin}) => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default PayslipList
+export default PayslipList;

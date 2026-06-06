@@ -1,63 +1,125 @@
-import { Loader2, Lock, X } from 'lucide-react'
-import React, { useState } from 'react'
+import { Loader2, Lock, X } from "lucide-react";
+import React, { useState } from "react";
+import api from "../api/axios";
 
-const ChangePasswordModal = ({open, onClose}) => {
-    const [loading, setLoading] = useState(false)
-    const [message, setMessage] = useState({type: "", text: ""})
+const ChangePasswordModal = ({ open, onClose }) => {
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState({ type: "", text: "" });
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setMessage({ type: "", text: "" });
+
+    const formData = new FormData(e.currentTarget);
+    const currentPassword = formData.get("currentPassword");
+    const newPassword = formData.get("newPassword");
+
+    console.log({
+      currentPassword,
+      newPassword,
+    });
+
+    try {
+      const { data } = await api.post("/auth/change-password", {
+        currentPassword,
+        newPassword,
+      });
+
+      //   if (!data.success) throw new Error(data.error || "Failed");
+      setMessage({ type: "success", text: data.message });
+      e.target.reset();
+    } catch (error) {
+      console.log("Change Password Error:", error.response?.data);
+
+      setMessage({
+        type: "error",
+        text:
+          error.response?.data?.error ||
+          error.message ||
+          "Failed to change password",
+      });
+    } finally {
+      setLoading(false);
     }
+  };
 
-    if(!open) return null;
+  if (!open) return null;
 
   return (
     <>
-    <div onClick={onClose} className='fixed inset-0 z-50 flex items-center justify-center p-4'>
-        <div className='absolute inset-0 bg-black/40 backdrop-blur-sm' />
+      <div
+        onClick={onClose}
+        className="fixed inset-0 z-50 flex items-center justify-center p-4"
+      >
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm" />
 
+        <div
+          onClick={(e) => e.stopPropagation()}
+          className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md animate-fade-in"
+        >
+          <div className="flex items-center justify-between p-6 pb-0">
+            <h2 className="text-lg font-medium text-slate-700 flex items-center gap-2">
+              <Lock className="w-5 h-5 text-slate-400" /> Change Password
+            </h2>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-lg hover:bg-slate-100 transition-colors text-slate-400 hover:text-slate-600"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
 
-        <div onClick={(e) => e.stopPropagation()} className='relative bg-white rounded-2xl shadow-2xl w-full max-w-md animate-fade-in'>
-            <div className='flex items-center justify-between p-6 pb-0'>
-                <h2 className='text-lg font-medium text-slate-700 flex items-center gap-2'>
-                    <Lock className='w-5 h-5 text-slate-400'/> Change Password 
-                </h2>
-                <button onClick={onClose} className='p-2 rounded-lg hover:bg-slate-100 transition-colors text-slate-400 hover:text-slate-600'>
-                    <X className='w-5 h-5'/>
-                </button>
+          <form onSubmit={handleSubmit} className="p-6 space-y-5">
+            {message.text && (
+              <div
+                className={`p-3 rounded-xl text-sm flex items-start gap-3 ${message.type === "success" ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-rose-50 text-rose-700 border border-rose-200"}`}
+              >
+                <div
+                  className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${message.type === "success" ? "bg-emerald-500" : "bg-red-500"}`}
+                />
+                {message.text}
+              </div>
+            )}
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                {" "}
+                Current Password{" "}
+              </label>
+              <input type="password" name="currentPassword" required />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-2">
+                {" "}
+                New Password{" "}
+              </label>
+              <input type="password" name="newPassword" required />
             </div>
 
-            <form onSubmit={handleSubmit} className='p-6 space-y-5'> 
-                {
-                    message.text && (
-                        <div className={`p-3 rounded-xl text-sm flex items-start gap-3 ${message.type === "success" ? "bg-emerald-50 text-emerald-700 border border-emerald-200" : "bg-rose-50 text-rose-700 border border-rose-200"}`}>
-                            <div className={`w-1.5 h-1.5 rounded-full mt-1.5 shrink-0 ${message.type === "success" ? "bg-emerald-500" : "bg-red-500"}`}/>
-                            {message.text}
-                        </div>
-                    )
-                }
-                <div>
-                    <label className='block text-sm font-medium text-slate-700 mb-2'> Current Password </label>
-                    <input type="password" name='currentPassword' required />
-                </div>
-                <div>
-                    <label className='block text-sm font-medium text-slate-700 mb-2'> New Password </label>
-                    <input type="password" name='newPassword' required />
-                </div>
-
-                <div className='flex gap-3 pt-2'>
-                    <button type='button' onClick={onClose} className='btn-secondary flex-1'> Cancel </button>
-                    <button type='submit' disabled={loading}   className='btn-primary flex-1 flex justify-center items-center gap-2'> {loading && <Loader2 className='w-4 h-4 animate-spin'/>} Update  </button>
-                </div>
-            </form>
+            <div className="flex gap-3 pt-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="btn-secondary flex-1"
+              >
+                {" "}
+                Cancel{" "}
+              </button>
+              <button
+                type="submit"
+                disabled={loading}
+                className="btn-primary flex-1 flex justify-center items-center gap-2"
+              >
+                {" "}
+                {loading && <Loader2 className="w-4 h-4 animate-spin" />}{" "}
+                Update{" "}
+              </button>
+            </div>
+          </form>
         </div>
-
-
-
-    </div>
-      
+      </div>
     </>
-  )
-}
+  );
+};
 
-export default ChangePasswordModal
+export default ChangePasswordModal;
