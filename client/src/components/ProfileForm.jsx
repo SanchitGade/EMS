@@ -102,6 +102,7 @@ const ProfileForm = ({ initialData, onSuccess }) => {
               name="bio"
               placeholder="Write a brief bio"
               defaultValue={initialData.bio || ""}
+              disabled={initialData.isDeleted}
               className={`resize-none ${initialData.isDeleted ? "bg-slate-50 text-slate-400 cursor-not-allowed" : ""}`}
             />
             <p className="text-xs text-slate-300 mt-1.5">

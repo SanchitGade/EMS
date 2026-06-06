@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { data, Link, useLocation } from "react-router-dom";
-import { dummyProfileData } from "../assets/assets";
 import api from "../api/axios";
 import { useAuth } from "../context/AuthContext";
 import {
@@ -32,10 +31,6 @@ const SideBar = () => {
         setUserName(`${data.firstName} ${data.lastName || " "}`.trim());
       }
     });
-  }, []);
-
-  useEffect(() => {
-    setUserName(dummyProfileData.firstName + " " + dummyProfileData.lastName);
   }, []);
 
   //Close Mobile Sidebar

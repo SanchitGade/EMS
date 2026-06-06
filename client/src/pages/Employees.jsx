@@ -16,12 +16,13 @@ const Employees = () => {
   const [showCreateModel, setShowCreateModel] = useState(false)  
 
   const fetchEmployees = useCallback(async () => {
+  setLoading(true);
    try {
     const url = selectedDept ? `/employees?department=${selectedDept}` : "/employees";
     const res = await api.get(url);
     setEmployees(res.data)
    } catch (error) {
-    console.error("Failed to fetch employees");
+    console.error("Failed to fetch employees", error);
    }finally{
     setLoading(false)
    }

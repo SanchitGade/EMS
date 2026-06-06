@@ -18,11 +18,12 @@ const CheckInButton = ({ todayRecord, onAction }) => {
 
       setTimeout(async () => {
         await onAction();
-        setLoading(false);
       }, 500);
     } catch (error) {
       setLoading(false);
       toast.error(error?.response?.data?.error || error?.message);
+    } finally {
+      setLoading(false);
     }
   };
 
