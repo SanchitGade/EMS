@@ -1,8 +1,13 @@
 import { useState } from "react";
-import { ArrowBigLeftDash, EyeOffIcon, EyeIcon, Loader2Icon } from "lucide-react";
+import {
+  ArrowBigLeftDash,
+  EyeOffIcon,
+  EyeIcon,
+  Loader2Icon,
+} from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import {toast} from 'react-hot-toast'
+import { toast } from "react-hot-toast";
 import LoginLeftSide from "./LoginLeftSide";
 
 const LoginForm = ({ role, title, subtitle }) => {
@@ -12,21 +17,44 @@ const LoginForm = ({ role, title, subtitle }) => {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const {login} = useAuth();
+  const { login } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    setError("")
-    setLoading(true)
+    setError("");
+    setLoading(true);
     try {
-      await login(email, password, role)
-      navigate("/dashboard")
+      await login(email, password, role);
+      navigate("/dashboard");
     } catch (error) {
-      toast.error(error.response?. data?.error || error.message || "Login Failed");
+      toast.error(
+        error.response?.data?.error || error.message || "Login Failed",
+      );
     } finally {
-      setLoading(false)
+      setLoading(false);
+    }
+  };
+
+  const handleDemoLogin = async (e) => {
+    e.preventDefault();
+    const demoEmail =
+      role === "admin" ? "Admin@examplee.com" : "employee@ems.com";
+
+    const demoPassword = role === "admin" ? "admin123" : "employee123";
+
+    setLoading(true);
+
+    try {
+      await login(demoEmail, demoPassword, role);
+      navigate("/dashboard");
+    } catch (error) {
+      toast.error(
+        error?.response?.data?.error || error?.message || "Demo Login Failed",
+      );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -104,12 +132,31 @@ const LoginForm = ({ role, title, subtitle }) => {
                 </div>
               </div>
 
-              <button type="submit" disabled={loading} className="w-full py-3 bg-linear-to-r from-indigo-600 to-indigo-300 text-white rounded-md text-sm font-semibold 
-               hover:from-indigo-700 hover:to-indigo-600 disable:opacity-50 transition-all duration-200 shodow-lg shadow-indigo-500/25 active:scale-[0.98] flex items-center justify-center">
-                {loading && <Loader2Icon className="animate-spin h-4 w-4 mr-2" />}
+              <button
+                type="submit"
+                disabled={loading}
+                className="w-full py-3 bg-linear-to-r from-indigo-600 to-indigo-300 text-white rounded-md text-sm font-semibold 
+               hover:from-indigo-700 hover:to-indigo-600 disabled:opacity-50 transition-all duration-200 shdow-lg shadow-indigo-500/25 active:scale-[0.98] flex items-center justify-center"
+              >
+                {loading && (
+                  <Loader2Icon className="animate-spin h-4 w-4 mr-2" />
+                )}
                 Sign In
               </button>
 
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  onClick={handleDemoLogin}
+                  disabled={loading}
+                  className="w-5/10 py-3 border border-slate-300 text-indigo-600 rounded-2xl text-sm font-semibold  hover:bg-slate-50 transition-all duration-200"
+                >
+                  {loading && (
+                    <Loader2Icon className="animate-spin h-4 w-4 mr-2" />
+                  )}
+                  Demo Sign In
+                </button>
+              </div>
             </form>
           </div>
         </div>
