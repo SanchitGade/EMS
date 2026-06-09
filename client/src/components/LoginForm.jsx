@@ -15,8 +15,8 @@ const LoginForm = ({ role, title, subtitle }) => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [demoLoading, setDemoLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -24,7 +24,7 @@ const LoginForm = ({ role, title, subtitle }) => {
     e.preventDefault();
 
     setError("");
-    setLoading(true);
+    setLoginLoading(true);
     try {
       await login(email, password, role);
       navigate("/dashboard");
@@ -33,7 +33,7 @@ const LoginForm = ({ role, title, subtitle }) => {
         error.response?.data?.error || error.message || "Login Failed",
       );
     } finally {
-      setLoading(false);
+      setLoginLoading(false);
     }
   };
 
@@ -44,7 +44,7 @@ const LoginForm = ({ role, title, subtitle }) => {
 
     const demoPassword = role === "admin" ? "admin123" : "employee123";
 
-    setLoading(true);
+    setDemoLoading(true);
 
     try {
       await login(demoEmail, demoPassword, role);
@@ -54,7 +54,7 @@ const LoginForm = ({ role, title, subtitle }) => {
         error?.response?.data?.error || error?.message || "Demo Login Failed",
       );
     } finally {
-      setLoading(false);
+      setDemoLoading(false);
     }
   };
 
@@ -134,24 +134,24 @@ const LoginForm = ({ role, title, subtitle }) => {
 
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loginLoading || demoLoading}
                 className="w-full py-3 bg-linear-to-r from-indigo-600 to-indigo-300 text-white rounded-md text-sm font-semibold 
                hover:from-indigo-700 hover:to-indigo-600 disabled:opacity-50 transition-all duration-200 shdow-lg shadow-indigo-500/25 active:scale-[0.98] flex items-center justify-center"
               >
-                {loading && (
+                {loginLoading && (
                   <Loader2Icon className="animate-spin h-4 w-4 mr-2" />
                 )}
                 Sign In
               </button>
 
-              <div className="flex justify-center">
+              <div className="flex justify-center ">
                 <button
                   type="button"
                   onClick={handleDemoLogin}
-                  disabled={loading}
-                  className="w-5/10 py-3 border border-slate-300 text-indigo-600 rounded-2xl text-sm font-semibold  hover:bg-slate-50 transition-all duration-200"
-                >
-                  {loading && (
+                  disabled={loginLoading || demoLoading}
+                  className=" flex justify-center w-5/10 py-3 border border-slate-300 text-indigo-600 rounded-2xl text-sm font-semibold  hover:bg-slate-50 transition-all duration-200"
+                > 
+                  {demoLoading && (
                     <Loader2Icon className="animate-spin h-4 w-4 mr-2" />
                   )}
                   Demo Sign In
